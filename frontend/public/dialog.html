@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>猫咪对话</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .bubble {
+            padding: 18px 24px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+            color: #444;
+            text-align: center;
+            min-width: 180px;
+        }
+    </style>
+</head>
+<body>
+<div class="bubble" id="dialog-text">喵喵~</div>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const text = params.get('message');
+    const target = document.getElementById('dialog-text');
+    target.textContent = text ? text : '喵喵~';
+</script>
+</body>
+</html>
+
