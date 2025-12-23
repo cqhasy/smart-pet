@@ -17,5 +17,5 @@ import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Cr
  * @returns {$CancellablePromise<string>}
  */
 export function SayHello(screenX, screenY) {
-    return $Call.ByID(3677931814, screenX, screenY);
+    return $Call.ByID(3951517854, screenX, screenY);
 }

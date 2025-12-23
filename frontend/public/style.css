@@ -6,45 +6,62 @@
     user-select: none;
 }
 
-body {
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* 核心：保持原有逻辑，仅禁用不必要的缩放 */
+html, body {
+    height: 100vh !important;   /* 强制和窗口高度一致 */
+    width: 100vw !important;    /* 强制和窗口宽度一致 */
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: hidden !important;
     cursor: default;
+    --wails-draggable: no-drag;
+    transform: none !important;
+    position: relative;        /* 关键：让子元素绝对定位以根节点为锚点 */
 }
 
+::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+/* 容器强制覆盖整个窗口，锚点和窗口完全一致 */
 .pet-stage {
-    width: 180px;
-    height: 180px;
+    width: 100% !important;     /* 不是固定300px，而是100%覆盖窗口 */
+    height: 100% !important;    /* 不是固定200px，而是100%覆盖窗口 */
     border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    padding: 12px;
-    box-sizing: border-box;
+    padding: 0 !important;
+    box-sizing: border-box !important;
     background: transparent;
     box-shadow: none;
     backdrop-filter: none;
+    --wails-draggable: no-drag;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    display: block !important;
+    z-index: 1;                 /* 确保容器在最底层 */
 }
 
+/* 小猫锚定容器（窗口）的左上角，贴顶显示 */
 .pet-avatar {
-    width: 120px;
-    height: 120px;
-    object-fit: contain;
-    transition: transform 120ms ease;
+    position: absolute !important;
+    top: 0 !important;          /* 强制贴顶 */
+    left: 0 !important;         /* 强制贴左 */
+    width: auto !important;     /* 宽度自适应比例 */
+    height: 100% !important;    /* 高度填满窗口 */
+    object-fit: contain !important; /* 保留图片比例，不拉伸 */
+    --wails-draggable: no-drag;
+    z-index: 10;                /* 小猫在容器上层 */
+    user-select: none !important;          /* 禁止文字/图片被选中（核心） */
+    -webkit-user-drag: none !important;    /* 禁止webkit内核（Chrome/Edge）拖拽图片 */
 }
 
 .pet-avatar:active {
     transform: scale(0.95);
 }
 
+/* 气泡跟随小猫位置 */
 .pet-bubble {
     min-height: 28px;
     padding: 6px 10px;
@@ -57,6 +74,11 @@ body {
     transform: translateY(6px);
     transition: opacity 120ms ease, transform 120ms ease;
     pointer-events: none;
+    min-width: 100px;
+    /* 气泡定位：小猫上方居中 */
+    position: absolute;
+    top: 20px;
+    left: 90px;
 }
 
 .pet-bubble.visible {
@@ -64,6 +86,7 @@ body {
     transform: translateY(0);
 }
 
+/* 按钮跟随小猫位置 */
 .pet-btn {
     width: 90px;
     border: none;
@@ -74,6 +97,10 @@ body {
     color: #432c2c;
     cursor: pointer;
     transition: transform 120ms ease, filter 120ms ease;
+    /* 按钮定位：小猫下方居中 */
+    position: absolute;
+    top: 170px;
+    left: 105px;
 }
 
 .pet-btn:hover {

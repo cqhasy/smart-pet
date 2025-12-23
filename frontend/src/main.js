@@ -1,4 +1,4 @@
-import { DialogServer } from '../bindings/changeme/backend/server'
+import { DialogServer } from '../bindings/smartPet/backend/server'
 
 const avatar = document.getElementById('pet-avatar');
 const DIALOG_WIDTH = 260;

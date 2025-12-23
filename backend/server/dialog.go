@@ -1,7 +1,9 @@
 package server
 
 import (
-	"changeme/backend/dialog/controller"
+	"github.com/wailsapp/wails/v3/pkg/application"
+	"smartPet/backend/dialog/controller"
+	"smartPet/backend/dialog/service"
 )
 
 type DialogController interface {
@@ -17,6 +19,13 @@ func NewDialogServer(service *controller.DialogController) *DialogServer {
 	return &DialogServer{
 		Service: service,
 	}
+}
+
+func RegisterDialogServer(s *Server) {
+	se := service.New()
+	c := controller.NewDialogController(s.Core, s.MainWindow, se)
+	dialog := NewDialogServer(c)
+	s.Core.RegisterService(application.NewService(dialog))
 }
 
 func (d *DialogServer) SayHello(screenX float64, screenY float64) string {

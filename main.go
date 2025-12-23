@@ -1,12 +1,13 @@
 package main
 
 import (
-	"changeme/backend/dialog/controller"
-	"changeme/backend/dialog/service"
-	"changeme/backend/server"
 	"embed"
-	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
+	"smartPet/backend/config"
+	"smartPet/backend/pkg/viperx"
+	"smartPet/backend/server"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 var appRef *application.App
@@ -37,13 +38,13 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 	})
+	v := viperx.NewViperSetting("backend/config/main.yaml")
+	MConf := config.NewMainWindowMaskConf(v)
 
 	se := server.NewServer(app)
-	s := service.New()
-	c := controller.NewDialogController(se.Core, s)
-	dialog := server.NewDialogServer(c)
 
-	se.InitServer(dialog)
+	se.InitServer(MConf)
+
 	err := se.Run()
 
 	if err != nil {

@@ -1,45 +1,57 @@
 package server
 
-import "github.com/wailsapp/wails/v3/pkg/application"
+import (
+	"smartPet/backend/config"
+	"smartPet/backend/util"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
+)
 
 type Server struct {
-	Core *application.App
+	Core       *application.App
+	MainWindow *application.WebviewWindow
 }
 
 func NewServer(c *application.App) *Server {
 	return &Server{Core: c}
 }
 
-func (s *Server) createMainWindow() {
-	s.Core.Window.NewWithOptions(application.WebviewWindowOptions{
+func (s *Server) createMainWindow(conf *config.MainWindowConf) *application.WebviewWindow {
+	maskImageBytes := util.TurnImgToTransparent(conf.Mask)
+
+	main := s.Core.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "main",
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
-		Width:           200,
-		Height:          200,
+		Width:           conf.Width,
+		Height:          conf.Height,
+		DisableResize:   true, // 禁止调整窗口大小
 		Frameless:       true, // 无边框
 		AlwaysOnTop:     true,
 		InitialPosition: application.WindowXY,
-		X:               0,
-		Y:               0,
+		X:               conf.X,
+		Y:               conf.Y,
 		BackgroundType:  application.BackgroundTypeTransparent,
 		URL:             "/",
 		Windows: application.WindowsWindow{
 			DisableFramelessWindowDecorations: true,
-			WindowMaskDraggable:               true,
+			WindowMask:                        maskImageBytes,
+			WindowMaskDraggable:               true, // 关闭遮罩拖动，只让猫本身拖动
 		},
 	})
+
+	return main
 }
 
-func (s *Server) InitServer(dialog *DialogServer) {
+func (s *Server) InitServer(conf *config.MainWindowConf) {
 	// 创建主窗口
-	s.createMainWindow()
+	s.MainWindow = s.createMainWindow(conf)
 
 	// 注册服务
-	s.Core.RegisterService(application.NewService(dialog))
+	RegisterDialogServer(s)
 }
 
 func (s *Server) Run() error {
